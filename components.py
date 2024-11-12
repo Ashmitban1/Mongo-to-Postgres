@@ -58,18 +58,22 @@ def load_data(_offline_data, session_id):
     if session_id is None:
         return []
 
+    start_time = "2024-04-23 13:40:29"
+    end_time = "2024-04-23 13:56:41"
+
     try:
         db = get_db()
         cursor = db.cursor()
 
-        # PostgreSQL query to fetch data based on session_id and source "linpot"
+        # PostgreSQL query to fetch data based on session_id, source "linpot", and timestamp range
         query = """
         SELECT * 
         FROM realtime_metrics
         WHERE metadata->>'session_id' = %s
-          AND metadata->>'source' = 'linpot';
+          AND metadata->>'source' = 'linpot'
+          AND timestamp BETWEEN %s AND %s;
         """
-        cursor.execute(query, (str(session_id),))
+        cursor.execute(query, (str(session_id), start_time, end_time))
         records = cursor.fetchall()
 
         # Fetch column names from the cursor description
@@ -86,3 +90,5 @@ def load_data(_offline_data, session_id):
         print(f"Error fetching data from PostgreSQL: {e}")
         # Fallback to offline data if unable to connect to PostgreSQL
         return _offline_data[int(session_id)] if session_id != None else []
+    finally:
+        close_db()
