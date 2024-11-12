@@ -1,6 +1,7 @@
 import dash_mantine_components as dmc
 from dash import dcc, callback, Output, Input, State, html
 from flask import g
+import pandas as pd
 import psycopg2
 import os
 
@@ -79,3 +80,62 @@ def update_session_id_values(data, _url):
         # Fallback to offline data in case of error
         data_string = [str(ids) for ids in data]
         return sorted(data_string)
+    finally:
+        close_db()
+
+@callback(
+    Output("metrics-output", "children"),
+    Input("session-id", "data")
+)
+def fetch_metrics_data(session_id):
+    """Fetches metrics data within the specified time range for the selected session ID."""
+    if session_id is None:
+        return "Please select a Session ID."
+
+    # Define the time range
+    start_time = "2024-04-23 13:40:29"
+    end_time = "2024-04-23 13:56:41"
+
+    db = get_db()
+    if db is None:
+        return "Failed to connect to the database."
+
+    try:
+        cursor = db.cursor()
+
+        # Query to fetch all metrics within the specified time range for the selected session ID
+        query = """
+        SELECT * 
+        FROM realtime_metrics
+        WHERE metadata->>'session_id' = %s
+          AND timestamp BETWEEN %s AND %s;
+        """
+        cursor.execute(query, (session_id, start_time, end_time))
+        records = cursor.fetchall()
+
+        # If no data is found, display a message
+        if not records:
+            return "No data found for the selected session ID and time range."
+
+        # Fetch column names from the cursor description
+        columns = [desc[0] for desc in cursor.description]
+
+        # Convert the query results to a DataFrame
+        df = pd.DataFrame(records, columns=columns)
+
+        # Generate a table or other output from the DataFrame
+        return dmc.Table(
+            children=[
+                html.Thead(html.Tr([html.Th(col) for col in columns])),
+                html.Tbody([
+                    html.Tr([html.Td(df.iloc[i][col]) for col in columns])
+                    for i in range(len(df))
+                ])
+            ]
+        )
+    except Exception as e:
+        print(f"Error fetching metrics data from PostgreSQL: {e}")
+        return "Error fetching data from PostgreSQL."
+    finally:
+        cursor.close()
+        close_db()
