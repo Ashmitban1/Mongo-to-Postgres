@@ -2,7 +2,7 @@ import os
 import psycopg2
 
 # PostgreSQL database URL
-DB_URL = 'postgresql://postgres:feCDeC3CE6e2eCfD43bg11625f1Cg233@autorack.proxy.rlwy.net:30549/railway'
+DB_URL = ''
 
 # PostgreSQL connection setup
 def get_db():
