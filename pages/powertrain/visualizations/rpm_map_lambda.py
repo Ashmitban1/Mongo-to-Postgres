@@ -11,7 +11,7 @@ PAGE = "powertrain"
 VIZ_ID = "rpm-map-lambda"
 
 # PostgreSQL database connection URL
-DATABASE_URL = "postgresql://postgres:feCDeC3CE6e2eCfD43bg11625f1Cg233@autorack.proxy.rlwy.net:30549/railway"
+DATABASE_URL = ""
 
 # Define the start and end timestamps
 start_time = "2024-04-23 13:40:29"
