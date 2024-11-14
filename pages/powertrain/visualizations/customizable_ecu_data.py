@@ -12,7 +12,7 @@ VIZ_ID = "customizable_graph"
 ID = f"{PAGE}-{VIZ_ID}"
 
 # Define the PostgreSQL connection URL
-DATABASE_URL = "postgresql://postgres:feCDeC3CE6e2eCfD43bg11625f1Cg233@autorack.proxy.rlwy.net:30549/railway"
+DATABASE_URL = ""
 
 # Set the start and end times
 start_time = "2024-04-23 13:40:29"
