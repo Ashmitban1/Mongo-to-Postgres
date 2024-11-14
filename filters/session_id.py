@@ -5,7 +5,7 @@ from flask import g
 from werkzeug.local import LocalProxy
 
 # PostgreSQL database URL
-DATABASE_URL = "postgresql://postgres:feCDeC3CE6e2eCfD43bg11625f1Cg233@autorack.proxy.rlwy.net:30549/railway"
+DATABASE_URL = ""
 
 def get_db():
     db = getattr(g, '_database', None)
